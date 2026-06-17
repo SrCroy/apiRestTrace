@@ -1,18 +1,16 @@
 <?php
 
+use App\Http\Controllers\Api\AuthController;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+Route::post('/register',  [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
 
-Route::get('/information', function(){
-    $user = User::all();
-    return response()->json([
-        'success' => true,
-        'message' => 'Todo esta corriendo bien',
-        'users' => $user
-    ]);
+Route::middleware('auth:sanctum')->group(function (){
+    Route::get('/getAllUsers', [AuthController::class, 'getAllUsers']);
+    Route::post('/logout', [AuthController::class, 'logout']);
 });
+
+Route::get('/nombres', [AuthController::class, 'obtenerNombresUsuarios']);
