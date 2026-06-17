@@ -11,12 +11,13 @@ class ChechkAdminRole
 {
     /**
      * Handle an incoming request.
+     * Permite acceso a usuarios con rol 'admin' o 'moderador'.
      *
      * @param  Closure(Request): (Response)  $next
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (Auth::check() && Auth::user()->rol === 'admin') {
+        if (Auth::check() && in_array(Auth::user()->rol, ['admin', 'moderador'])) {
             return $next($request);
         }
 
@@ -26,6 +27,7 @@ class ChechkAdminRole
             ]);
         }
 
-        return redirect('/')->with('error', 'No tienes los permisos de administrador');
+        return redirect('/')->with('error', 'No tienes los permisos necesarios para acceder al panel.');
     }
 }
+
