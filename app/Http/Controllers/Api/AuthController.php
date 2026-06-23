@@ -13,41 +13,58 @@ use Illuminate\Testing\Fluent\Concerns\Has;
 
 class AuthController extends Controller
 {
-    public function register(LoginRequest $request){
+    public function register(Request $request)
+    {
         try {
-            $date = $request->validated();
+            $request->validate([
+                'username' => 'required|string|unique:users,username',
+                'nombre' => 'required|string',
+                'apellido' => 'required|string',
+                'email' => 'required|email|unique:users,email',
+                'password' => 'required|string|min:6',
+            ]);
 
             DB::beginTransaction();
-            $user = User::create($date);
 
-            $user['password'] = Hash::make($user['password']);
-            
+            $user = User::create([
+                'username' => $request->username,
+                'nombre' => $request->nombre,
+                'apellido' => $request->apellido,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+            ]);
+
             DB::commit();
 
             return response()->json([
                 'success' => true,
-                'message' => 'Usuario creado con exito',
-                'user' => $user
+                'message' => 'Usuario creado con éxito',
+                'data' => [
+                    'user' => $user
+                ]
             ], 201);
+
         } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,
-                'messaje' => 'Error de validacion',
-                'error' => $e->errors(),
+                'message' => 'Error de validación',
+                'errors' => $e->errors()
             ], 422);
-        } catch (\Exception $e){
+
+        } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
                 'success' => false,
                 'message' => 'Error al registrar el usuario',
-                'error' => config('app.debug') ? $e->getMessage() : null
-            ]);
+                'errors' => config('app.debug') ? $e->getMessage() : null
+            ], 500);
         }
     }
 
-    
 
-    public function getAllUsers(){
+
+    public function getAllUsers()
+    {
         $users = User::all();
 
         return response()->json([
@@ -56,8 +73,9 @@ class AuthController extends Controller
             'user' => $users
         ]);
     }
-    
-    public function login(Request $request){
+
+    public function login(Request $request)
+    {
         $request->validate([
             'email' => 'required|email',
             'password' => 'required'
@@ -75,13 +93,18 @@ class AuthController extends Controller
         $token = $users->createToken('api-token')->plainTextToken;
 
         return response()->json([
-            'token' => 'Bearer '. $token,
-            'user' => $users
+            'success' => true,
+            'message' => 'Login exitoso',
+            'data' => [
+                'token' => $token,
+                'user' => $users
+            ]
         ]);
     }
 
 
-    public function logout(Request $request){
+    public function logout(Request $request)
+    {
         $request->user()->currentAccessToken()->delete();
         return response()->json([
             'success' => true,
@@ -89,7 +112,8 @@ class AuthController extends Controller
         ]);
     }
 
-    public function obtenerNombresUsuarios(){
+    public function obtenerNombresUsuarios()
+    {
         $users = User::pluck('nombre');
         return response()->json([
             'users' => $users
