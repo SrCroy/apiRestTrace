@@ -68,7 +68,12 @@
                             <td class="px-3 text-muted">#{{ $usuario->id }}</td>
                             <td>
                                 <div class="d-flex align-items-center">
-                                    <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-2" style="width:35px;height:35px;font-size:0.85rem;">
+                                    <img src="{{ asset('storage/' . $usuario->avatar) }}" 
+                                         alt="Avatar de {{ $usuario->nombre }}" 
+                                         class="rounded-circle me-2" 
+                                         style="width:35px;height:35px;object-fit:cover;"
+                                         onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                                    <div class="rounded-circle bg-primary text-white align-items-center justify-content-center me-2" style="width:35px;height:35px;font-size:0.85rem;display:none;">
                                         {{ strtoupper(substr($usuario->nombre ?? $usuario->username ?? 'U', 0, 1)) }}
                                     </div>
                                     <div>

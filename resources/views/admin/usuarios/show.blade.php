@@ -13,7 +13,12 @@
         <div class="col-lg-4 mb-4">
             <div class="card border-0 shadow-sm">
                 <div class="card-body text-center">
-                    <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center mx-auto mb-3" style="width:80px;height:80px;font-size:2rem;">
+                    <img src="{{ asset('storage/' . $usuario->avatar) }}" 
+                         alt="Avatar de {{ $usuario->nombre }}" 
+                         class="rounded-circle mx-auto mb-3 d-block" 
+                         style="width:80px;height:80px;object-fit:cover;"
+                         onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                    <div class="rounded-circle bg-primary text-white align-items-center justify-content-center mx-auto mb-3" style="width:80px;height:80px;font-size:2rem;display:none;">
                         {{ strtoupper(substr($usuario->nombre ?? 'U', 0, 1)) }}
                     </div>
                     <h5 class="fw-bold mb-0">{{ $usuario->nombre }} {{ $usuario->apellido }}</h5>
