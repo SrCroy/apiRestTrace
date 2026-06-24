@@ -2,8 +2,10 @@
 
 use App\Http\Controllers\Api\ActividadController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\GrupoController;
 use App\Http\Controllers\Api\LogroController;
 use App\Http\Controllers\Api\ProfileController;
+use App\Http\Controllers\Api\PublicacionController;
 use App\Http\Controllers\Api\RutaController;
 use Illuminate\Support\Facades\Route;
 
@@ -51,4 +53,11 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // ─── Módulo 5: Logros Globales (protegidas) ──────────────
     Route::get('/logros/mis-logros', [LogroController::class, 'misLogros']);
+
+    // ─── Módulo 6: Muro y Grupos ─────────────────────────────
+    Route::get('/publicaciones', [PublicacionController::class, 'index']);
+
+    Route::get('/grupos', [GrupoController::class, 'index']);
+    Route::get('/grupos/{id}', [GrupoController::class, 'show']);
+    Route::get('/grupos/{id}/publicaciones', [GrupoController::class, 'publicaciones']);
 });
