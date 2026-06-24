@@ -1,16 +1,46 @@
 <?php
 
+use App\Http\Controllers\Api\ActividadController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\ProfileController;
+use App\Http\Controllers\Api\RutaController;
 use Illuminate\Support\Facades\Route;
 
 // Rutas públicas
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/nombres', [AuthController::class, 'obtenerNombresUsuarios']);
+Route::get('/perfil/{userId}', [ProfileController::class, 'verPerfil']);
+
+// Rutas públicas (Módulo 4)
+Route::get('/rutas', [RutaController::class, 'listar']);
+Route::get('/rutas/{rutaId}', [RutaController::class, 'detalle']);
 
 // Rutas protegidas (requieren autenticación)
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/getAllUsers', [AuthController::class, 'getAllUsers']);
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/avatar/update', [AuthController::class, 'updateAvatar']);
+
+    // Perfil
+    Route::get('/perfil', [ProfileController::class, 'miPerfil']);
+    Route::put('/perfil/editar', [ProfileController::class, 'editarPerfil']);
+    Route::post('/perfil/cambiar-contraseña', [ProfileController::class, 'cambiarContrasena']);
+
+    // ─── Módulo 3: Actividades y GPS ─────────────────────────
+    Route::post('/actividades/iniciar', [ActividadController::class, 'iniciar']);
+    Route::post('/actividades/{actividadId}/gps', [ActividadController::class, 'enviarGps']);
+    Route::post('/actividades/{actividadId}/pausar', [ActividadController::class, 'pausar']);
+    Route::post('/actividades/{actividadId}/reanudar', [ActividadController::class, 'reanudar']);
+    Route::post('/actividades/{actividadId}/finalizar', [ActividadController::class, 'finalizar']);
+    Route::post('/actividades/{actividadId}/descartar', [ActividadController::class, 'descartar']);
+    Route::get('/actividades', [ActividadController::class, 'listar']);
+    Route::get('/actividades/{actividadId}', [ActividadController::class, 'detalle']);
+    Route::delete('/actividades/{actividadId}', [ActividadController::class, 'eliminar']);
+
+    // ─── Módulo 4: Rutas (protegidas) ────────────────────────
+    Route::post('/rutas', [RutaController::class, 'crear']);
+    Route::post('/rutas/{rutaId}/puntos-gps', [RutaController::class, 'guardarPuntosGps']);
+    Route::put('/rutas/{rutaId}', [RutaController::class, 'actualizar']);
+    Route::delete('/rutas/{rutaId}', [RutaController::class, 'eliminar']);
 });

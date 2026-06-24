@@ -37,6 +37,11 @@ class rutas extends Model
         return $this->belongsTo(User::class, 'usuario_id');
     }
 
+    public function puntosGps()
+    {
+        return $this->hasMany(RutaPuntoGps::class, 'ruta_id');
+    }
+
     public function actividades()
     {
        return $this->hasMany(actividades::class, 'ruta_id');
