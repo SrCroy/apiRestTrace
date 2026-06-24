@@ -9,6 +9,7 @@ use App\Http\Requests\IniciarActividadRequest;
 use App\Models\actividades;
 use App\Models\amistades;
 use App\Models\puntosGps;
+use App\Models\usuarios_logros;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -292,7 +293,22 @@ class ActividadController extends Controller
                 $actividad->ruta()->increment('veces_usada');
             }
 
-            // TODO: Disparar Observer de logros
+            // El Observer de logros se dispara automáticamente al cambiar estado.
+            // Consultar los logros que se acaban de desbloquear.
+            $logrosNuevos = usuarios_logros::where('usuario_id', $user->id)
+                ->where('obtenido_en', '>=', Carbon::now()->subSeconds(5))
+                ->with('logro')
+                ->get()
+                ->map(function ($ul) {
+                    return [
+                        'id'          => $ul->logro->id,
+                        'clave'       => $ul->logro->clave,
+                        'nombre'      => $ul->logro->nombre,
+                        'descripcion' => $ul->logro->descripcion,
+                        'icono'       => $ul->logro->icono,
+                        'obtenido_en' => $ul->obtenido_en,
+                    ];
+                });
 
             return response()->json([
                 'success' => true,
@@ -309,7 +325,8 @@ class ActividadController extends Controller
                     'velocidad_promedio_kmh'  => $actividad->velocidad_promedio_kmh,
                     'estado'                  => $actividad->estado,
                     'finalizada_en'           => $actividad->finalizada_en,
-                ]
+                ],
+                'logros_nuevos' => $logrosNuevos,
             ]);
 
         } catch (Exception $e) {

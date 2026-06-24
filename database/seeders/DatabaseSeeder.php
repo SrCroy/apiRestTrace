@@ -23,5 +23,9 @@ class DatabaseSeeder extends Seeder
             'apellido' => 'User',
             'email' => 'test@example.com',
         ]);
+
+        $this->call([
+            LogrosSeeder::class,
+        ]);
     }
 }
