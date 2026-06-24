@@ -54,10 +54,23 @@ Route::middleware('auth:sanctum')->group(function () {
     // ─── Módulo 5: Logros Globales (protegidas) ──────────────
     Route::get('/logros/mis-logros', [LogroController::class, 'misLogros']);
 
-    // ─── Módulo 6: Muro y Grupos ─────────────────────────────
+    // ─── Módulo 6: Muro (Publicaciones) ─────────────────────────
     Route::get('/publicaciones', [PublicacionController::class, 'index']);
+    Route::post('/publicaciones', [PublicacionController::class, 'store']);
+    Route::get('/publicaciones/{id}', [PublicacionController::class, 'show']);
+    Route::put('/publicaciones/{id}', [PublicacionController::class, 'update']);
+    Route::delete('/publicaciones/{id}', [PublicacionController::class, 'destroy']);
+    Route::post('/publicaciones/{id}/reaccion', [PublicacionController::class, 'toggleReaccion']);
+    Route::post('/publicaciones/{id}/comentario', [PublicacionController::class, 'comentar']);
 
+    // ─── Módulo 7: Grupos ────────────────────────────────────────
     Route::get('/grupos', [GrupoController::class, 'index']);
+    Route::post('/grupos', [GrupoController::class, 'store']);
     Route::get('/grupos/{id}', [GrupoController::class, 'show']);
+    Route::post('/grupos/{id}/unirse', [GrupoController::class, 'unirse']);
+    Route::post('/grupos/{id}/salir', [GrupoController::class, 'salir']);
     Route::get('/grupos/{id}/publicaciones', [GrupoController::class, 'publicaciones']);
+    Route::post('/grupos/{id}/publicaciones', [GrupoController::class, 'publicar']);
+    Route::post('/grupos/{grupoId}/publicaciones/{pubId}/reaccion', [GrupoController::class, 'toggleReaccionGrupo']);
+    Route::post('/grupos/{grupoId}/publicaciones/{pubId}/comentario', [GrupoController::class, 'comentarGrupo']);
 });
